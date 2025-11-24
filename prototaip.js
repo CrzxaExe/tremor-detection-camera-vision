@@ -1,49 +1,54 @@
-// ==== Membership Functions (Triangular / Trapezoidal) ====
-
-// Helper: triangular membership
-function trimf(x, [a, b, c]) {
-    if (x <= a || x >= c) return 0;
-    if (x === b) return 1;
-    if (x > a && x < b) return (x - a) / (b - a);
-    if (x > b && x < c) return (c - x) / (c - b);
-    return 0;
+function extractPoint(landmarks: Point3D[], index: number): Point3D {
+  const lm = landmarks[index]
+  return { x: lm.x, y: lm.y, z: lm.z }
 }
+function computeAmplitude(positions: TremorBuffer): number {
+  const xs = positions.map(p => p.x)
+  const ys = positions.map(p => p.y)
 
-// ==== Fuzzy Inputs ====
+  const mean = (arr: number[]) =>
+    arr.reduce((a, b) => a + b, 0) / arr.length
 
-// Amplitudo
-function amp_low(x)    { return trimf(x, [0, 0, 4]); }
-function amp_med(x)    { return trimf(x, [3, 5, 7]); }
-function amp_high(x)   { return trimf(x, [6, 10, 10]); }
+  const std = (arr: number[]) => {
+    const m = mean(arr)
+    return Math.sqrt(arr.map(v => (v - m) ** 2).reduce((a, b) => a + b, 0) / arr.length)
+  }
 
-// Frekuensi
-function freq_norm(x)  { return trimf(x, [0, 0, 4]); }
-function freq_poss(x)  { return trimf(x, [3, 7, 10]); }
-function freq_trem(x)  { return trimf(x, [8, 20, 20]); }
-
-// Stabilitas
-function stab_stable(x)    { return trimf(x, [0.7, 1.0, 1.0]); }
-function stab_unstable(x)  { return trimf(x, [0, 0, 0.5]); }
-
-
-function fuzzyInference(amp, freq, stab) {
-
-    // Rule 1: low amplitude + normal freq + stable => low tremor
-    const r1 = Math.min(amp_low(amp), freq_norm(freq), stab_stable(stab));
-
-    // Rule 2: medium amplitude + possible freq + stable => medium tremor
-    const r2 = Math.min(amp_med(amp), freq_poss(freq), stab_stable(stab));
-
-    // Rule 3: high amplitude + tremor freq + unstable => high tremor
-    const r3 = Math.min(amp_high(amp), freq_trem(freq), stab_unstable(stab));
-
-    return { r1, r2, r3 };
+  return Math.sqrt(std(xs) ** 2 + std(ys) ** 2)
 }
+function computeFrequency(positions: TremorBuffer): number {
+  const xs = positions.map(p => p.x)
+  const N = xs.length
 
-function defuzzify({ r1, r2, r3 }) {
-    // Low = 20, Medium = 50, High = 85 (centroid representasi kasar)
-    const numerator = (r1 * 20) + (r2 * 50) + (r3 * 85);
-    const denominator = r1 + r2 + r3 || 1;
-    return numerator / denominator;
+  const re = Array(N).fill(0)
+  const im = Array(N).fill(0)
 
+  for (let k = 0; k < N; k++) {
+    for (let n = 0; n < N; n++) {
+      const angle = (2 * Math.PI * k * n) / N
+      re[k] += xs[n] * Math.cos(angle)
+      im[k] -= xs[n] * Math.sin(angle)
+    }
+  }
+
+  const magnitudes = re.map((r, i) => Math.sqrt(r * r + im[i] * im[i]))
+
+  const maxIdx = magnitudes.indexOf(Math.max(...magnitudes))
+
+  const FPS = 30
+  return (maxIdx * FPS) / N
+}
+function computeStability(positions: TremorBuffer): number {
+  const diffs: number[] = []
+
+  for (let i = 1; i < positions.length; i++) {
+    const dx = positions[i].x - positions[i - 1].x
+    const dy = positions[i].y - positions[i - 1].y
+    diffs.push(Math.sqrt(dx * dx + dy * dy))
+  }
+
+  const mean = diffs.reduce((a, b) => a + b, 0) / diffs.length
+  const variance = diffs.map(v => (v - mean) ** 2).reduce((a, b) => a + b, 0) / diffs.length
+
+  return 1 / (1 + variance)
 }
