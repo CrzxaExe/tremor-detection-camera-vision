@@ -97,3 +97,4 @@ export function deteksiTremorFuzzy(amplitude: number, frequency: number, stabili
 
   return { score, kategori, fuzzyOut };
 }
+
