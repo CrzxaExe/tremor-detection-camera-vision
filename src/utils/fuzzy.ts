@@ -78,6 +78,7 @@ function computeOutputConfidence(value: number) {
     const n = outNormal(value);
     const m = outMild(value);
     const s = outSevere(value);
+    console.log(`${n}\n${m}\n${s}\n`)
 
     const sum = n + m + s || 1; // hindari divisi nol
 
@@ -145,6 +146,6 @@ function inferTremor(amplitude: number, frequency: number, stability: number) {
     return { value: crisp, label, confidence };
 }
 
-const result = inferTremor(0.4, 6.5, 0.07);
+const result = inferTremor(0.18, 1.8, 0.015);
 
 console.log(result);
