@@ -1,100 +1,90 @@
-// ===========================
-// MEMBERSHIP FUNCTIONS
-// ===========================
+// Linear membership helper
+function triangle(x: number, a: number, b: number, c: number) {
+    if (x <= a || x >= c) return 0;
+    if (x === b) return 1;
+    if (x > a && x < b) return (x - a) / (b - a);
+    return (c - x) / (c - b);
+}
+// Amplitude
 function ampLow(x: number) {
-  return x <= 2 ? 1 : x >= 5 ? 0 : (5 - x) / 3;
+    return triangle(x, 0, 0.25, 0.5);
 }
-
-function ampMedium(x: number) {
-  if (x < 3 || x > 8) return 0;
-  if (x >= 4 && x <= 6) return 1;
-  if (x < 4) return (x - 3) / 1;
-  return (8 - x) / 2;
+function ampMed(x: number) {
+    return triangle(x, 0.3, 0.75, 1.2);
 }
-
 function ampHigh(x: number) {
-  return x <= 6 ? 0 : x >= 9 ? 1 : (x - 6) / 3;
+    return triangle(x, 1, 2, 3);
 }
 
-function freqNormal(x: number) {
-  return x <= 6 ? 1 : x >= 10 ? 0 : (10 - x) / 4;
+// Frequency
+function freqLow(x: number) {
+    return triangle(x, 0, 2, 4);
 }
-
+function freqMed(x: number) {
+    return triangle(x, 4, 6, 8);
+}
 function freqHigh(x: number) {
-  return x <= 6 ? 0 : x >= 10 ? 1 : (x - 6) / 4;
+    return triangle(x, 8, 10, 12);
+}
+// Stability
+function stabStable(x: number) {
+    return triangle(x, 0, 0.025, 0.05);
+}
+function stabMid(x: number) {
+    return triangle(x, 0.03, 0.065, 0.1);
+}
+function stabUnstable(x: number) {
+    return triangle(x, 0.08, 0.14, 0.2);
 }
 
-function stabilityLow(x: number) {
-  // variansi kecil = stabil
-  return x <= 2 ? 1 : x >= 5 ? 0 : (5 - x) / 3;
+function inferTremor(amplitude: number, frequency: number, stability: number) {
+    // fuzzification
+    const A = {
+        low: ampLow(amplitude),
+        med: ampMed(amplitude),
+        high: ampHigh(amplitude),
+    };
+
+    const F = {
+        low: freqLow(frequency),
+        med: freqMed(frequency),
+        high: freqHigh(frequency),
+    };
+
+    const S = {
+        stable: stabStable(stability),
+        mid: stabMid(stability),
+        unstable: stabUnstable(stability),
+    };
+
+    // rules
+    const rules = [
+        { a: A.low, f: F.low, s: S.stable, out: 0 },
+        { a: A.low, f: F.med, s: S.stable, out: 0.5 },
+
+        { a: A.med, f: F.med, s: S.mid, out: 0.5 },
+
+        { a: A.high, f: F.high, s: S.unstable, out: 1 },
+        { a: A.high, f: F.med, s: S.unstable, out: 1 },
+        { a: A.med, f: F.high, s: S.unstable, out: 1 },
+
+        { a: A.low, f: F.high, s: S.unstable, out: 0.5 },
+    ];
 }
 
-function stabilityHigh(x: number) {
-  // variansi besar = tidak stabil
-  return x <= 5 ? 0 : x >= 9 ? 1 : (x - 5) / 4;
-}
 
-// ===========================
-// INFERENCE
-// ===========================
-function fuzzyInference(amplitude: number, frequency: number, stability: number) {
-  const A_low = ampLow(amplitude);
-  const A_med = ampMedium(amplitude);
-  const A_high = ampHigh(amplitude);
+function defuzzify(rules: { w: number; out: number }[]) {
+    let weighted = 0;
+    let sumWeight = 0;
 
-  const F_norm = freqNormal(frequency);
-  const F_high = freqHigh(frequency);
+    for (const r of rules) {
+        weighted += r.w * r.out;
+        sumWeight += r.w;
+    }
 
-  const S_low = stabilityLow(stability);
-  const S_high = stabilityHigh(stability);
+    // jika tidak ada rule aktif → output 0
+    if (sumWeight === 0) return 0;
 
-  // RULE BASE
-  const rule1 = Math.min(A_low, F_norm);     // none
-  const rule2 = Math.min(A_med, F_norm);     // mild
-  const rule3 = Math.min(A_high, F_high);    // severe
-  const rule4 = Math.min(S_high, F_high);    // severe
-  const rule5 = Math.min(A_med, F_high);     // medium
-
-  return {
-    none: rule1,
-    mild: rule2,
-    medium: rule5,
-    severe: Math.max(rule3, rule4)
-  };
-}
-
-// ===========================
-// DEFUZZIFICATION (Weighted Average)
-// ===========================
-function defuzzify(output: { none: number; mild: number; medium: number; severe: number }) {
-  const { none, mild, medium, severe } = output;
-
-  // nilai crisp untuk tiap kategori
-  // none=0, mild=1, medium=2, severe=3
-  const num =
-    (none * 0) +
-    (mild * 1) +
-    (medium * 2) +
-    (severe * 3);
-
-  const den = none + mild + medium + severe;
-
-  return den === 0 ? 0 : num / den;
-}
-
-// ===========================
-// MAIN FINAL FUNCTION
-// ===========================
-export function deteksiTremorFuzzy(amplitude: number, frequency: number, stability: number) {
-  const fuzzyOut = fuzzyInference(amplitude, frequency, stability);
-  const score = defuzzify(fuzzyOut);
-
-  let kategori = "";
-  if (score < 0.5) kategori = "Tidak Ada Tremor";
-  else if (score < 1.5) kategori = "Ringan";
-  else if (score < 2.5) kategori = "Sedang";
-  else kategori = "Berat";
-
-  return { score, kategori, fuzzyOut };
+    return weighted / sumWeight;
 }
 
