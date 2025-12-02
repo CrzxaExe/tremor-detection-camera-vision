@@ -1,5 +1,5 @@
 <template>
-  <div class="hand-tracker w-full max-w-260">
+  <div class="hand-tracker w-full max-w-260 rounded-lg overflow-hidden">
     <div class="relative">
       <div class="controls absolute z-20 top-2 left-2 flex gap-2">
         <button @click="overlayVisible = !overlayVisible" class="px-3 py-1 bg-white/80 rounded">Toggle Overlay</button>
