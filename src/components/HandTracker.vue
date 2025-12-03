@@ -15,6 +15,7 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { Hands, HAND_CONNECTIONS } from '@mediapipe/hands'
+import { storeLandmark } from '@/utils/landmarkVariable';
 
 const props = defineProps({
   onResults: Function,
@@ -86,6 +87,11 @@ async function startHands() {
   hands.onResults((results) => {
     // draw only when overlay is visible
     if (overlayVisible.value) drawResults(results)
+    
+    // if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+    //     // Ambil data tangan pertama (index 0) dan simpan
+    //     storeLandmark(results.multiHandLandmarks[0]);
+    // }
 
     // emit and call callback for further processing
     emit('results', results)

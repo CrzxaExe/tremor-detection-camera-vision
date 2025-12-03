@@ -10,48 +10,62 @@ function triangle(x: number, a: number, b: number, c: number) {
 // Amplitude
 // -------------------
 function ampLow(x: number) {
-    return triangle(x, 0, 0.25, 0.5);
+    // 0 -> 0.01
+    return triangle(x, -0.01, 0, 0.01); 
 }
 function ampMed(x: number) {
-    return triangle(x, 0.3, 0.75, 1.2);
+    // 0.005 -> 0.02 (Overlap kiri kanan)
+    return triangle(x, 0.005, 0.015, 0.025); 
 }
 function ampHigh(x: number) {
-    return triangle(x, 1, 2, 3);
+    // Start 0.015 -> Puncak 0.03 -> Akhir 10.0
+    return triangle(x, 0.015, 0.03, 10.0); 
 }
 
 // -------------------
 // Frequency
 // -------------------
 function freqLow(x: number) {
-    return triangle(x, 0, 2, 4);
+    // 0 -> 1.0
+    // Diperlebar ke 1.2 agar angka 1.00 tidak jadi 0
+    return triangle(x, -1, 0.5, 1.2); 
 }
 function freqMed(x: number) {
-    return triangle(x, 4, 6, 8);
+    // 1.0 -> 2.0
+    // Diperlebar 0.8 ke 2.2 agar overlap
+    return triangle(x, 0.8, 1.5, 2.2); 
 }
 function freqHigh(x: number) {
-    return triangle(x, 8, 10, 12);
+    // 2.0 -> 3.0
+    // Start dari 1.8 agar nyambung, Max diperbesar biar aman
+    return triangle(x, 1.8, 2.5, 10); 
 }
 
 // -------------------
 // Stability
 // -------------------
 function stabStable(x: number) {
-    return triangle(x, 0, 0.025, 0.05);
+    // 0.9 -> 1.0
+    return triangle(x, 0.85, 0.95, 1.1); // Overlap
 }
 function stabMid(x: number) {
-    return triangle(x, 0.03, 0.065, 0.1);
+    // 0.8 -> 0.9
+    return triangle(x, 0.75, 0.85, 0.95); // Overlap
 }
 function stabUnstable(x: number) {
-    return triangle(x, 0.08, 0.14, 0.2);
+    // 0 -> 0.8
+    // Diperlebar ke -1 agar nilai 0 pas tetap terbaca Unstable
+    return triangle(x, -1, 0.75, 0.85); 
 }
 
 
-//
-//
-//
+// -------------------
+// OUTPUT MEMBERSHIP FUNCTIONS
+// -------------------
+
 function classifyTremor(value: number): string {
-    if (value < 0.25) return "Normal";
-    if (value < 0.7) return "Mild";
+    if (value < 0.35) return "Normal";
+    if (value < 0.75) return "Mild";
     return "Severe";
 }
 
@@ -83,9 +97,9 @@ function computeOutputConfidence(value: number) {
     const sum = n + m + s || 1; // hindari divisi nol
 
     return {
-        Normal: n / sum,
-        Mild: m / sum,
-        Severe: s / sum
+        Normal: parseFloat((n / sum).toFixed(2)),
+        Mild: parseFloat((m / sum).toFixed(2)),
+        Severe: parseFloat((s / sum).toFixed(2))
     };
 }
 
@@ -113,18 +127,45 @@ export function inferTremor(amplitude: number, frequency: number, stability: num
 
     // RULES
     const rules = [
-        { a: A.low, f: F.low, s: S.stable, out: 0 },
-        { a: A.low, f: F.med, s: S.stable, out: 0.5 },
+        // --- AMP LOW ---
+        { a: A.low, f: F.low, s: S.stable, out: 0 },   // Normal
+        { a: A.low, f: F.low, s: S.mid, out: 0 },      // Normal
+        { a: A.low, f: F.low, s: S.unstable, out: 0.5 }, // Mild (Jitter)
 
-        { a: A.med, f: F.med, s: S.mid, out: 0.5 },
+        { a: A.low, f: F.med, s: S.stable, out: 0 },   // Normal
+        { a: A.low, f: F.med, s: S.mid, out: 0.5 },    // Mild
+        { a: A.low, f: F.med, s: S.unstable, out: 0.5 }, // Mild
 
-        { a: A.high, f: F.high, s: S.unstable, out: 1 },
-        { a: A.high, f: F.med, s: S.unstable, out: 1 },
-        { a: A.med, f: F.high, s: S.unstable, out: 1 },
+        { a: A.low, f: F.high, s: S.stable, out: 0.5 }, // Mild (High freq tremor)
+        { a: A.low, f: F.high, s: S.mid, out: 0.5 },    // Mild
+        { a: A.low, f: F.high, s: S.unstable, out: 0.5 }, // Mild
 
-        { a: A.low, f: F.high, s: S.unstable, out: 0.5 },
+        // --- AMP MED ---
+        { a: A.med, f: F.low, s: S.stable, out: 0.5 },  // Mild
+        { a: A.med, f: F.low, s: S.mid, out: 0.5 },     // Mild
+        { a: A.med, f: F.low, s: S.unstable, out: 1 },  // Severe (Tidak stabil!)
+
+        { a: A.med, f: F.med, s: S.stable, out: 0.5 },  // Mild
+        { a: A.med, f: F.med, s: S.mid, out: 1 },       // Severe
+        { a: A.med, f: F.med, s: S.unstable, out: 1 },  // Severe
+
+        { a: A.med, f: F.high, s: S.stable, out: 1 },   // Severe
+        { a: A.med, f: F.high, s: S.mid, out: 1 },      // Severe
+        { a: A.med, f: F.high, s: S.unstable, out: 1 }, // Severe
+
+        // --- AMP HIGH ---
+        { a: A.high, f: F.low, s: S.stable, out: 0.5 }, // Mild (Gerakan lambat besar = Sengaja?)
+        { a: A.high, f: F.low, s: S.mid, out: 1 },      // Severe
+        { a: A.high, f: F.low, s: S.unstable, out: 1 }, // Severe
+
+        { a: A.high, f: F.med, s: S.stable, out: 1 },   // Severe
+        { a: A.high, f: F.med, s: S.mid, out: 1 },      // Severe
+        { a: A.high, f: F.med, s: S.unstable, out: 1 }, // Severe
+
+        { a: A.high, f: F.high, s: S.stable, out: 1 },  // Severe
+        { a: A.high, f: F.high, s: S.mid, out: 1 },     // Severe
+        { a: A.high, f: F.high, s: S.unstable, out: 1 },// Severe
     ];
-
     // INFERENCE
     let weighted = 0;
     let totalWeight = 0;
