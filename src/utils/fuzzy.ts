@@ -91,7 +91,7 @@ function computeOutputConfidence(value: number) {
 
 // ---------- INFERENSI FUZZY ----------
 
-function inferTremor(amplitude: number, frequency: number, stability: number) {
+export function inferTremor(amplitude: number, frequency: number, stability: number) {
     // FUZZIFICATION
     const A = {
         low: ampLow(amplitude),
@@ -145,7 +145,3 @@ function inferTremor(amplitude: number, frequency: number, stability: number) {
 
     return { value: crisp, label, confidence };
 }
-
-const result = inferTremor(0.18, 1.8, 0.015);
-
-console.log(result);
