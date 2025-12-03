@@ -10,52 +10,53 @@ function triangle(x: number, a: number, b: number, c: number) {
 // Amplitude
 // -------------------
 function ampLow(x: number) {
-    // 0 -> 0.01
-    return triangle(x, -0.01, 0, 0.01); 
+    // 0 -> 0.02 (Sebelumnya 0.01)
+    // Gerakan sampai 0.02 masih ada unsur Low-nya
+    return triangle(x, -0.01, 0, 0.02); 
 }
 function ampMed(x: number) {
-    // 0.005 -> 0.02 (Overlap kiri kanan)
-    return triangle(x, 0.005, 0.015, 0.025); 
+    // 0.01 -> 0.04 (Sebelumnya 0.005 -> 0.025)
+    // Digeser naik supaya gerakan 0.02-0.03 masuk kategori Medium
+    return triangle(x, 0.01, 0.025, 0.04); 
 }
 function ampHigh(x: number) {
-    // Start 0.015 -> Puncak 0.03 -> Akhir 10.0
-    return triangle(x, 0.015, 0.03, 10.0); 
+    // Start 0.03 -> Puncak 0.06 -> Akhir 10.0
+    // Start High dinaikkan dari 0.015 ke 0.03
+    return triangle(x, 0.03, 0.06, 10.0); 
 }
 
 // -------------------
 // Frequency
 // -------------------
 function freqLow(x: number) {
-    // 0 -> 1.0
-    // Diperlebar ke 1.2 agar angka 1.00 tidak jadi 0
-    return triangle(x, -1, 0.5, 1.2); 
+    // 0 -> 1.5 (Sebelumnya 1.2)
+    return triangle(x, -1, 0.5, 1.5); 
 }
 function freqMed(x: number) {
-    // 1.0 -> 2.0
-    // Diperlebar 0.8 ke 2.2 agar overlap
-    return triangle(x, 0.8, 1.5, 2.2); 
+    // 1.0 -> 2.5 (Sebelumnya 2.2)
+    // Peak digeser ke 1.75 biar lebih tengah
+    return triangle(x, 1.0, 1.75, 2.5); 
 }
 function freqHigh(x: number) {
-    // 2.0 -> 3.0
-    // Start dari 1.8 agar nyambung, Max diperbesar biar aman
-    return triangle(x, 1.8, 2.5, 10); 
+    // 2.0 -> Ke atas (Sebelumnya 1.8)
+    return triangle(x, 2.0, 3.0, 10); 
 }
 
 // -------------------
 // Stability
 // -------------------
 function stabStable(x: number) {
-    // 0.9 -> 1.0
-    return triangle(x, 0.85, 0.95, 1.1); // Overlap
+    // 0.85 -> 1.0 (Masih sama, cukup longgar)
+    return triangle(x, 0.85, 0.95, 1.1); 
 }
 function stabMid(x: number) {
-    // 0.8 -> 0.9
-    return triangle(x, 0.75, 0.85, 0.95); // Overlap
+    // 0.7 -> 0.9 (Sedikit diperlebar ke bawah)
+    return triangle(x, 0.7, 0.8, 0.9); 
 }
 function stabUnstable(x: number) {
-    // 0 -> 0.8
-    // Diperlebar ke -1 agar nilai 0 pas tetap terbaca Unstable
-    return triangle(x, -1, 0.75, 0.85); 
+    // 0 -> 0.75 (Sebelumnya 0.8)
+    // Harus di bawah 0.75 baru dianggap unstable
+    return triangle(x, -1, 0.6, 0.75); 
 }
 
 
