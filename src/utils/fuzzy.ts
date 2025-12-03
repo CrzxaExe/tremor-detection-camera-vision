@@ -10,18 +10,12 @@ function triangle(x: number, a: number, b: number, c: number) {
 // Amplitude
 // -------------------
 function ampLow(x: number) {
-    // 0 -> 0.02 (Sebelumnya 0.01)
-    // Gerakan sampai 0.02 masih ada unsur Low-nya
     return triangle(x, -0.01, 0, 0.02); 
 }
 function ampMed(x: number) {
-    // 0.01 -> 0.04 (Sebelumnya 0.005 -> 0.025)
-    // Digeser naik supaya gerakan 0.02-0.03 masuk kategori Medium
     return triangle(x, 0.01, 0.025, 0.04); 
 }
 function ampHigh(x: number) {
-    // Start 0.03 -> Puncak 0.06 -> Akhir 10.0
-    // Start High dinaikkan dari 0.015 ke 0.03
     return triangle(x, 0.03, 0.06, 10.0); 
 }
 
@@ -29,16 +23,12 @@ function ampHigh(x: number) {
 // Frequency
 // -------------------
 function freqLow(x: number) {
-    // 0 -> 1.5 (Sebelumnya 1.2)
     return triangle(x, -1, 0.5, 1.5); 
 }
 function freqMed(x: number) {
-    // 1.0 -> 2.5 (Sebelumnya 2.2)
-    // Peak digeser ke 1.75 biar lebih tengah
     return triangle(x, 1.0, 1.75, 2.5); 
 }
 function freqHigh(x: number) {
-    // 2.0 -> Ke atas (Sebelumnya 1.8)
     return triangle(x, 2.0, 3.0, 10); 
 }
 
@@ -46,16 +36,12 @@ function freqHigh(x: number) {
 // Stability
 // -------------------
 function stabStable(x: number) {
-    // 0.85 -> 1.0 (Masih sama, cukup longgar)
     return triangle(x, 0.85, 0.95, 1.1); 
 }
 function stabMid(x: number) {
-    // 0.7 -> 0.9 (Sedikit diperlebar ke bawah)
     return triangle(x, 0.7, 0.8, 0.9); 
 }
 function stabUnstable(x: number) {
-    // 0 -> 0.75 (Sebelumnya 0.8)
-    // Harus di bawah 0.75 baru dianggap unstable
     return triangle(x, -1, 0.6, 0.75); 
 }
 
