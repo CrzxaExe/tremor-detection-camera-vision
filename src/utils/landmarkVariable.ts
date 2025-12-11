@@ -1,16 +1,28 @@
 import { reactive } from "vue";
 // import { fft, util } from "fft-js";
 
-export type Landmark = { x: number; y: number; z?: number };
-export type Snapshot = Landmark[];
+export const landmarks = reactive<SnapshotLandmark[]>([]);
+export const amplitudes = reactive<SnapshotAmplitude>([]);
+export const frequencies = reactive<SnapshotFrequency>([]);
+export const addHistoryAmplitudes = (
+  data: number,
+  maxLen: number = 30
+): void => {
+  if (data !== amplitudes[amplitudes.length - 1]) amplitudes.push(data);
+  if (maxLen > 0 && amplitudes.length > maxLen) amplitudes.shift();
+};
+export const addHistoryFreqencies = (
+  data: number,
+  maxLen: number = 30
+): void => {
+  if (data !== frequencies[frequencies.length - 1]) frequencies.push(data);
+  if (maxLen > 0 && frequencies.length > maxLen) frequencies.shift();
+};
 
-export const landmarks = reactive<Snapshot[]>([]);
-
-export const storeLandmark = (data: Snapshot, maxLen = 600) => {
+export const storeLandmark = (data: SnapshotLandmark, maxLen = 100) => {
   landmarks.push(data);
   if (maxLen > 0 && landmarks.length > maxLen) landmarks.shift();
 };
-
 export const clearLandmarks = () => {
   landmarks.splice(0, landmarks.length);
 };
@@ -37,6 +49,9 @@ export function computeAmplitude(index: number, options?: { window?: number }) {
   const dx = maxX - minX;
   const dy = maxY - minY;
   const amplitude = Math.sqrt(dx * dx + dy * dy);
+
+  addHistoryAmplitudes(amplitude);
+
   return amplitude;
 }
 
@@ -69,6 +84,8 @@ export function computeFrequency(
 
   // For a sinusoid, two zero-crossings per cycle -> freq = crossings / (2 * duration)
   const freqHz = crossings / (2 * durationSec);
+
+  addHistoryFreqencies(freqHz);
   return freqHz;
 }
 
@@ -99,11 +116,17 @@ export function computeStability(
   if (stability > 1) stability = 1;
   if (stability < 0) stability = 0;
 
+  // stabilities.push(stability);
+
   return { stddev, stability };
 }
 
 export default {
+  amplitudes,
+  frequencies,
   landmarks,
+  addHistoryAmplitudes,
+  addHistoryFreqencies,
   storeLandmark,
   clearLandmarks,
   getTrajectory,

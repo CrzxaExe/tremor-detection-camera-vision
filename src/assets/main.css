@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+.play-btn {
+  background: url(./icons/Play.svg);
+}
+.pause-btn {
+  background: url(./icons/Pause.svg);
+}

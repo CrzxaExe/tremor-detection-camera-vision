@@ -1,13 +1,16 @@
 <template>
-  <div class="hand-tracker w-full max-w-260 rounded-lg overflow-hidden">
-    <div class="relative">
-      <div class="controls absolute z-20 top-2 left-2 flex gap-2">
-        <button @click="overlayVisible = !overlayVisible" class="px-3 py-1 bg-white/80 rounded">Toggle Overlay</button>
-        <button @click="detecting = !detecting" class="px-3 py-1 bg-white/80 rounded">{{ detecting ? 'Pause' : 'Resume' }}</button>
-      </div>
+  <div class="w-full max-w-220 relative overflow-hidden rounded-lg">
+    <div class="absolute z-20 top-2 left-2 flex gap-2">
+      <button @click="overlayVisible = !overlayVisible" class="px-3 py-1 bg-white/80 rounded">{{ !overlayVisible ?  "Enable Overlay" : "Disable Overlay" }}</button>
+      <button @click="detecting = !detecting" class="px-3 py-1 bg-white/80 rounded">
+        <PauseIcon v-if="!detecting" class="stroke-black aspect-square w-8" />
+        <PlayIcon v-else class="stroke-black aspect-square w-8" />
+      </button>
+    </div>
 
-      <video ref="videoEl" autoplay playsinline muted :style="{ display: overlayVisible ? 'none' : 'block' }"></video>
-      <canvas ref="canvasEl" class="w-full aspect-video bg-black" :style="{ display: overlayVisible ? 'block' : 'none' }"></canvas>
+    <div class="w-full max-w-[640px] max-h-[400px] min-h-[400px] block bg-black overflow-hidden  ">
+      <video ref="videoEl" autoplay playsinline muted class="w-full" :style="{ display: overlayVisible ? 'none' : 'block' }"></video>
+      <canvas ref="canvasEl" class="w-full" :style="{ display: overlayVisible ? 'block' : 'none' }"></canvas>
     </div>
   </div>
 </template>
@@ -15,7 +18,8 @@
 <script setup>
 import { onMounted, onBeforeUnmount, ref, watch } from 'vue'
 import { Hands, HAND_CONNECTIONS } from '@mediapipe/hands'
-import { storeLandmark } from '@/utils/landmarkVariable';
+import PlayIcon from './icons/PlayIcon.vue'
+import PauseIcon from './icons/PauseIcon.vue'
 
 const props = defineProps({
   onResults: Function,
@@ -38,7 +42,7 @@ function drawResults(results) {
   const ctx = canvas?.getContext('2d')
   if (!canvas || !ctx) return
   canvas.width = videoEl.value.videoWidth || 640
-  canvas.height = videoEl.value.videoHeight || 480
+  canvas.height = videoEl.value.videoHeight || 400
 
   ctx.save()
   ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -99,7 +103,7 @@ async function startHands() {
   })
 
   // Capture user camera
-  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 }, audio: false })
+  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 400 }, audio: false })
   videoEl.value.srcObject = stream
   await videoEl.value.play()
 
@@ -131,9 +135,3 @@ watch(overlayVisible, (v) => {
   if (videoEl.value && hands) hands.send({ image: videoEl.value }).catch(() => {})
 })
 </script>
-
-<style scoped>
-.hand-tracker video { width: 100%; height: auto; display: none }
-.hand-tracker canvas { display: block; width: 100%; height: auto }
-.controls button { cursor: pointer }
-</style>

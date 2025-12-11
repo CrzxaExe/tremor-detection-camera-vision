@@ -5,3 +5,10 @@ type Vector3 = {
   y: number;
   z: number;
 };
+
+type Landmark = { x: number; y: number; z?: number };
+type SnapshotLandmark = Landmark[];
+
+type SnapshotAmplitude = number[];
+type SnapshotFrequency = number[];
+type SnapshotStability = number[];

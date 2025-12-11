@@ -11,7 +11,7 @@ function handleResults(results) {
 </script>
 
 <template>
-  <main class="lg:min-h-screen w-full flex flex-col lg:flex-row gap-2 lg:gap-4 justify-center items-center">
+  <main class="lg:min-h-screen w-full flex flex-col lg:flex-row gap-2 lg:gap-2 justify-center items-center">
     <HandTracker :onResults="handleResults" />
     <HandStatisic />
   </main>
