@@ -1,14 +1,14 @@
 <template>
-  <div class="w-full max-w-220 relative overflow-hidden rounded-lg">
+  <div class="w-full max-w-200 lg:min-h-[450px] relative overflow-hidden rounded-lg">
     <div class="absolute z-20 top-2 left-2 flex gap-2">
       <button @click="overlayVisible = !overlayVisible" class="px-3 py-1 bg-white/80 rounded">{{ !overlayVisible ?  "Enable Overlay" : "Disable Overlay" }}</button>
       <button @click="detecting = !detecting" class="px-3 py-1 bg-white/80 rounded">
-        <PauseIcon v-if="!detecting" class="stroke-black aspect-square w-8" />
-        <PlayIcon v-else class="stroke-black aspect-square w-8" />
+        <PauseIcon v-if="!detecting" class="stroke-black aspect-square w-4" />
+        <PlayIcon v-else class="stroke-black aspect-square w-4" />
       </button>
     </div>
 
-    <div class="w-full max-w-[640px] max-h-[400px] min-h-[400px] block bg-black overflow-hidden  ">
+    <div class="w-full max-w-[800px] max-h-[450px] min-h-[450px] block bg-black overflow-hidden  ">
       <video ref="videoEl" autoplay playsinline muted class="w-full" :style="{ display: overlayVisible ? 'none' : 'block' }"></video>
       <canvas ref="canvasEl" class="w-full" :style="{ display: overlayVisible ? 'block' : 'none' }"></canvas>
     </div>
@@ -103,7 +103,7 @@ async function startHands() {
   })
 
   // Capture user camera
-  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 400 }, audio: false })
+  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 450 }, audio: false })
   videoEl.value.srcObject = stream
   await videoEl.value.play()
 
