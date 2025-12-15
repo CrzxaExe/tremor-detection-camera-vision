@@ -61,9 +61,11 @@
 </template>
 
 <script setup lang="ts">
-import { amplitudes, computeAmplitude, computeFrequency, computeStability, frequencies, lastUpdated } from '@/utils/landmarkVariable';
 import { inferTremor } from '@/utils/fuzzy';
 import { ref, nextTick } from 'vue';
+import { Amplitude } from '@/lib/Amplitude';
+import { Frequency } from '@/lib/Frequency';
+import { Stability } from '@/lib/Stability';
 
 const amplitude = ref<number>(0);
 const frequency = ref<number>(0);
@@ -121,11 +123,11 @@ const graphOptions = ref({
 const graphSeries = ref([
     {
         name: "Amplitude",
-        data: amplitudes
+        data: Amplitude.data
     },
     {
         name: "Frequency",
-        data: frequencies
+        data: Frequency.data
     },
 ])
 
@@ -136,22 +138,22 @@ const fuzzyResult = ref({
 })
 
 setInterval(() => {
-    if (Date.now() - lastUpdated.value > 500) {
-        amplitude.value = 0;
-        frequency.value = 0;
-        stability.value = { stability: 1, stddev: 0 };
+    // if (Date.now() - lastUpdated.value > 500) {
+    //     amplitude.value = 0;
+    //     frequency.value = 0;
+    //     stability.value = { stability: 1, stddev: 0 };
         
-        fuzzyResult.value = {
-            value: 0,
-            label: "Normal",
-            confidence: { Normal: 1, Mild: 0, Severe: 0 }
-        };
-        return;
-    }
+    //     fuzzyResult.value = {
+    //         value: 0,
+    //         label: "Normal",
+    //         confidence: { Normal: 1, Mild: 0, Severe: 0 }
+    //     };
+    //     return;
+    // }
 
-    amplitude.value = (computeAmplitude(0, { window: window.value }) ?? 0) as number;
-    frequency.value = (computeFrequency(0, { window: window.value, sampleRate: sampleRate.value }) ?? 0) as number;
-    stability.value = computeStability(0, { window: window.value, tolerance: tolerance.value });
+    amplitude.value = (Amplitude.compute(0, { window: window.value }) ?? 0) as number;
+    frequency.value = (Frequency.compute(0, { window: window.value, sampleRate: sampleRate.value }) ?? 0) as number;
+    stability.value = Stability.compute(0, { window: window.value, tolerance: tolerance.value });
     nextTick();
 
     fuzzyResult.value = inferTremor(amplitude.value, frequency.value, stability.value.stability);

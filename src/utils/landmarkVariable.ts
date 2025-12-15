@@ -2,9 +2,10 @@ import { reactive, ref } from "vue";
 // import { fft, util } from "fft-js";
 
 export const landmarks = reactive<SnapshotLandmark[]>([]);
-export const amplitudes = reactive<SnapshotAmplitude>([]);
-export const frequencies = reactive<SnapshotFrequency>([]);
+export const amplitudes = reactive<SnapshotAmplitude[]>([]);
+export const frequencies = reactive<SnapshotFrequency[]>([]);
 export const addHistoryAmplitudes = (
+  // ok
   data: number,
   maxLen: number = 30
 ): void => {
@@ -12,6 +13,7 @@ export const addHistoryAmplitudes = (
   if (maxLen > 0 && amplitudes.length > maxLen) amplitudes.shift();
 };
 export const addHistoryFreqencies = (
+  // ok
   data: number,
   maxLen: number = 30
 ): void => {
@@ -22,20 +24,24 @@ export const addHistoryFreqencies = (
 export const lastUpdated = ref(0);
 
 export const storeLandmark = (data: SnapshotLandmark, maxLen = 100) => {
+  // ok
   lastUpdated.value = Date.now();
 
   landmarks.push(data);
   if (maxLen > 0 && landmarks.length > maxLen) landmarks.shift();
 };
 export const clearLandmarks = () => {
+  // ok
   landmarks.splice(0, landmarks.length);
 };
 
 export function getTrajectory(index: number): Landmark[] {
+  // ok
   return landmarks.map((s) => s?.[index]).filter(Boolean) as Landmark[];
 }
 
 export function computeAmplitude(index: number, options?: { window?: number }) {
+  // ok
   const traj = getTrajectory(index);
   const w = options?.window ?? traj.length;
   if (traj.length < 2) return null;
@@ -59,7 +65,7 @@ export function computeAmplitude(index: number, options?: { window?: number }) {
   return amplitude;
 }
 
-export function computeFrequency(
+export function computeFrequency( // ok
   index: number,
   options?: { window?: number; sampleRate?: number }
 ) {
@@ -137,7 +143,7 @@ export default {
   computeAmplitude,
   computeFrequency,
   computeStability,
-  lastUpdated
+  lastUpdated,
 };
 
 // // ----------------------------------------------------

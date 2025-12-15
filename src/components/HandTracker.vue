@@ -1,14 +1,14 @@
 <template>
-  <div class="w-full max-w-200 lg:min-h-[450px] relative overflow-hidden rounded-lg">
+  <div class="w-full max-w-210 lg:min-h-[400px] relative overflow-hidden rounded-lg lg:rounded-xl col-span-2 row-span-3">
     <div class="absolute z-20 top-2 left-2 flex gap-2">
-      <button @click="overlayVisible = !overlayVisible" class="px-3 py-1 bg-white/80 rounded">{{ !overlayVisible ?  "Enable Overlay" : "Disable Overlay" }}</button>
-      <button @click="detecting = !detecting" class="px-3 py-1 bg-white/80 rounded">
-        <PauseIcon v-if="!detecting" class="stroke-black aspect-square w-4" />
-        <PlayIcon v-else class="stroke-black aspect-square w-4" />
+      <button @click="detecting = !detecting" class="px-3 py-1 bg-white/80 rounded-lg">
+        <PauseIcon v-if="!detecting" class="stroke-primary-800 aspect-square w-4" />
+        <PlayIcon v-else class="stroke-primary-800 aspect-square w-4" />
       </button>
+      <button @click="overlayVisible = !overlayVisible" class="px-3 py-1 bg-white/80 rounded-lg">{{ !overlayVisible ?  "Enable Overlay" : "Disable Overlay" }}</button>
     </div>
 
-    <div class="w-full max-w-[800px] max-h-[450px] min-h-[450px] block bg-black overflow-hidden  ">
+    <div class="w-full max-w-[840px] max-h-[400px] lg:min-h-[400px] block bg-primary-800 overflow-hidden  ">
       <video ref="videoEl" autoplay playsinline muted class="w-full" :style="{ display: overlayVisible ? 'none' : 'block' }"></video>
       <canvas ref="canvasEl" class="w-full" :style="{ display: overlayVisible ? 'block' : 'none' }"></canvas>
     </div>
@@ -41,7 +41,7 @@ function drawResults(results) {
   const canvas = canvasEl.value
   const ctx = canvas?.getContext('2d')
   if (!canvas || !ctx) return
-  canvas.width = videoEl.value.videoWidth || 640
+  canvas.width = videoEl.value.videoWidth || 720
   canvas.height = videoEl.value.videoHeight || 400
 
   ctx.save()
@@ -103,7 +103,7 @@ async function startHands() {
   })
 
   // Capture user camera
-  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 450 }, audio: false })
+  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 720, height: 400 }, audio: false })
   videoEl.value.srcObject = stream
   await videoEl.value.play()
 
