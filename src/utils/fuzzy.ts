@@ -10,13 +10,13 @@ function triangle(x: number, a: number, b: number, c: number) {
 // Amplitude
 // -------------------
 function ampLow(x: number) {
-  return triangle(x, -0.01, 0, 0.02);
+  return triangle(x, -0.01, 0, 0.03);
 }
 function ampMed(x: number) {
-  return triangle(x, 0.01, 0.025, 0.04);
+  return triangle(x, 0.02, 0.04, 0.06);
 }
 function ampHigh(x: number) {
-  return triangle(x, 0.03, 0.06, 10.0);
+  return triangle(x, 0.04, 0.08, 10.0);
 }
 
 // -------------------
@@ -39,10 +39,10 @@ function stabStable(x: number) {
   return triangle(x, 0.85, 0.95, 1.1);
 }
 function stabMid(x: number) {
-  return triangle(x, 0.7, 0.8, 0.9);
+  return triangle(x, 0.65, 0.8, 0.9);
 }
 function stabUnstable(x: number) {
-  return triangle(x, -1, 0.6, 0.75);
+  return triangle(x, -1, 0.5, 0.7);
 }
 
 // -------------------

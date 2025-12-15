@@ -1,4 +1,4 @@
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 // import { fft, util } from "fft-js";
 
 export const landmarks = reactive<SnapshotLandmark[]>([]);
@@ -19,7 +19,11 @@ export const addHistoryFreqencies = (
   if (maxLen > 0 && frequencies.length > maxLen) frequencies.shift();
 };
 
+export const lastUpdated = ref(0);
+
 export const storeLandmark = (data: SnapshotLandmark, maxLen = 100) => {
+  lastUpdated.value = Date.now();
+
   landmarks.push(data);
   if (maxLen > 0 && landmarks.length > maxLen) landmarks.shift();
 };
@@ -133,6 +137,7 @@ export default {
   computeAmplitude,
   computeFrequency,
   computeStability,
+  lastUpdated
 };
 
 // // ----------------------------------------------------

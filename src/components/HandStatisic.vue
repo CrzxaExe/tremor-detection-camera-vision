@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { amplitudes, computeAmplitude, computeFrequency, computeStability, frequencies } from '@/utils/landmarkVariable';
+import { amplitudes, computeAmplitude, computeFrequency, computeStability, frequencies, lastUpdated } from '@/utils/landmarkVariable';
 import { inferTremor } from '@/utils/fuzzy';
 import { ref, nextTick } from 'vue';
 
@@ -136,6 +136,19 @@ const fuzzyResult = ref({
 })
 
 setInterval(() => {
+    if (Date.now() - lastUpdated.value > 500) {
+        amplitude.value = 0;
+        frequency.value = 0;
+        stability.value = { stability: 1, stddev: 0 };
+        
+        fuzzyResult.value = {
+            value: 0,
+            label: "Normal",
+            confidence: { Normal: 1, Mild: 0, Severe: 0 }
+        };
+        return;
+    }
+
     amplitude.value = (computeAmplitude(0, { window: window.value }) ?? 0) as number;
     frequency.value = (computeFrequency(0, { window: window.value, sampleRate: sampleRate.value }) ?? 0) as number;
     stability.value = computeStability(0, { window: window.value, tolerance: tolerance.value });
