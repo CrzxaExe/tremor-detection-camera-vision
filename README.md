@@ -44,11 +44,6 @@ Mengukur konsistensi posisi landmark terhadap titik pusat (centroid). Nilai stab
 - Bergantung pada kualitas deteksi MediaPipe
 - Tidak menggantikan diagnosis medis
 
-## Teknologi
-- MediaPipe Hands
-- Vue + TypeScript
-- Kamera RGB
-
 ## Referensi
 - MediaPipe Hands
 - TremorComputerVision Dataset
