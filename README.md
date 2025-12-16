@@ -1,49 +1,54 @@
 # Tremor Detection dengan Kamera
 
-## Latar Belakang
-Tremor tangan merupakan salah satu indikasi gangguan motorik yang umumnya dianalisis menggunakan sensor fisik. Proyek ini bertujuan menghadirkan pendekatan alternatif berbasis visi komputer menggunakan kamera, sehingga bersifat non-intrusif dan mudah diimplementasikan.
+Sistem ini mendeteksi dan mengklasifikasikan tremor tangan secara real-time menggunakan kamera dan visi komputer tanpa sensor fisik.
 
-## Tujuan
-Mengembangkan sistem pendeteksian tremor tangan secara real-time menggunakan kamera dengan mengekstraksi fitur amplitudo, frekuensi, dan stabilitas dari pergerakan landmark tangan.
-
-## Dataset
-Dataset yang digunakan berasal dari:
-[TremorComputerVision](https://github.com/JuliusWelzel/TremorComputerVision)
-
-## Arsitektur Sistem
-Kamera → MediaPipe Hands → Landmark Tangan (21 titik) → Penyimpanan History  
-→ Ekstraksi Fitur (Amplitudo, Frekuensi, Stabilitas) → Output Nilai Tremor
+## Alur Sistem
+Kamera → MediaPipe Hands (21 landmark tangan) → Penyimpanan lintasan landmark  
+→ Ekstraksi fitur (Amplitudo, Frekuensi, Stabilitas)  
+→ Inferensi Fuzzy → Klasifikasi Tremor
 
 ## Landmark Tangan
-MediaPipe Hands mendeteksi 21 titik landmark tangan pada setiap frame kamera. Posisi landmark (x, y) disimpan secara temporal untuk membentuk lintasan gerakan yang dianalisis lebih lanjut.
+MediaPipe Hands digunakan untuk mendeteksi 21 titik landmark tangan pada setiap frame.  
+Posisi landmark (x, y) disimpan sebagai history untuk membentuk lintasan gerakan tangan yang dianalisis secara temporal.
 
-## Ekstraksi Fitur
+## Ekstraksi Fitur Tremor
+- **Amplitudo** — Menggambarkan kuat atau lemahnya getaran tangan.  
+- **Frekuensi** — Menggambarkan seberapa cepat getaran terjadi per detik.  
+- **Stabilitas** — Mengukur seberapa konstan gerakan tangan dalam interval tertentu.  
 
-### Amplitudo
-Mengukur jarak perpindahan terjauh landmark tangan dalam window tertentu sebagai representasi kuat-lemahnya getaran.
-
-### Frekuensi
-Menghitung jumlah osilasi gerakan landmark berdasarkan perubahan arah lintasan terhadap posisi rata-rata (zero-crossing) untuk memperoleh frekuensi tremor (Hz).
-
-### Stabilitas
-Mengukur konsistensi posisi landmark terhadap titik pusat (centroid). Nilai stabilitas mendekati 1 menunjukkan gerakan yang stabil.
+Ketiga fitur ini dihitung dari lintasan landmark yang sama dan saling melengkapi.
 
 ## Parameter Sistem
-- **Window**: Jumlah frame yang digunakan untuk analisis
-- **Sample Rate**: Kecepatan frame kamera (FPS)
-- **Tolerance**: Ambang batas deviasi untuk stabilitas
-- **Max History**: Batas maksimum frame yang disimpan
+| Parameter | Deskripsi |
+|------------|------------|
+| **Window** | Jumlah frame yang digunakan untuk analisis |
+| **Sample Rate** | Kecepatan frame kamera (FPS) |
+| **Tolerance** | Ambang batas deviasi untuk stabilitas |
+| **Max History** | Batas maksimum frame yang disimpan |
+
+## Klasifikasi Tremor (Fuzzy Logic)
+Nilai **amplitudo**, **frekuensi**, dan **stabilitas** diproses menggunakan **Fuzzy Logic** untuk menangani ketidakpastian gerakan tangan.
+
+### Tahapan:
+1. **Fuzzification**  
+   - Low / Medium / High (Amplitude & Frequency)  
+   - Stable / Unstable (Stability)
+2. **Inferensi**  
+   - Aturan berbasis kombinasi ketiga fitur (IF–THEN)
+3. **Defuzzification**  
+   - Weighted average menghasilkan nilai tremor (0–1)
 
 ## Output
-- **Amplitudo**: Intensitas tremor
-- **Frekuensi**: Kecepatan tremor (Hz)
-- **Stabilitas**: Tingkat kestabilan gerakan (0–1)
+| Parameter | Deskripsi |
+|------------|------------|
+| **Value** | Nilai tingkat tremor (0–1) |
+| **Label** | Normal \| Mild \| Severe |
+| **Confidence** | Tingkat keyakinan tiap kelas |
+
+## Dataset
+[TremorComputerVision](https://github.com/JuliusWelzel/TremorComputerVision)
 
 ## Batasan Sistem
-- Sensitif terhadap noise kamera dan pencahayaan
-- Bergantung pada kualitas deteksi MediaPipe
-- Tidak menggantikan diagnosis medis
-
-## Referensi
-- MediaPipe Hands
-- TremorComputerVision Dataset
+- Sensitif terhadap noise kamera dan pencahayaan  
+- Bergantung pada kualitas deteksi MediaPipe  
+- Tidak dimaksudkan untuk menggantikan diagnosis medis
