@@ -58,7 +58,7 @@ const emit = defineEmits(['settings'])
 
 const rangeWindow = [30, 40, 50, 60, 70, 80, 90];
 const rangeTolerance = [0.01, 0.03, 0.05, 0.07, 0.09, 0.1];
-const rangeSample = [10, 20, 30, 40, 50, 60];
+const rangeSample = [20, 30, 40];
 
 const windowSettings = ref<number>(60);
 const toleranceSettings = ref<number>(0.03);

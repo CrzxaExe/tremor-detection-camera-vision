@@ -28,7 +28,7 @@ function handleResults(results: Results) {
   if(Object.keys(hands).length > 0) Landmarks.store(hands[0] as SnapshotLandmark)
 }
 const handleSettings = (result: SettingsResult) => {
-  settings = result;
+  Object.assign(settings, result);
 }
 
 onMounted(() => {
@@ -40,15 +40,13 @@ onMounted(() => {
     const result = inferTremor(amplitude.value, frequency.value, stability.value.stability);
     Object.assign(fuzzyResult, result);
     nextTick();
-  }, 200)
+  }, 250)
 })
 
 </script>
 
 <template>
   <main class="w-full">
-    <HeaderVue />
-
     <section class="w-full min-h-screen lg:max-h-screen px-4 lg:px-0 py-2 lg:py-4 pt-32 lg:pt-24 flex lg:justify-center lg:items-center overflow-x-hidden overflow-y-visible lg:overflow-y-hidden font-dashboard font-normal">
       <div class="grid grid-cols-1 lg:grid-cols-4 lg:grid-rows-5 gap-2 lg:gap-4 xl:gap-8 w-full lg:max-w-400">
         <Settings :onResults="handleSettings" />

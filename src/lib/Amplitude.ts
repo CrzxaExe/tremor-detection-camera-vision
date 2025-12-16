@@ -8,24 +8,23 @@ class Amplitude {
   /**
    * Max length of data
    */
-  static maxDataLength: number = 14;
+  static maxDataLength: number = 40;
 
   /**
    * Amplitude Data store
    */
-  static data = reactive<ArrayFixedLength<SnapshotAmplitude, 0, 14>>([]);
+  static data = reactive<ArrayFixedLength<SnapshotAmplitude, 0, 40>>([]);
 
   /**
    * Add new history data of Amplitude
    * @param data amplitude data
    */
   static addHistory(data: number) {
-    if (data !== this.data[this.data.length - 1]) this.data.push(data);
+    this.data.push(data);
 
     if (this.maxDataLength > 0 && this.data.length > this.maxDataLength)
       this.data.shift();
   }
-
   /**
    * Get computed amplitude
    * @param index index of data

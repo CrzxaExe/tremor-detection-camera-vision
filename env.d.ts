@@ -22,6 +22,19 @@ type SettingsResult = {
   sampleRates: number;
 };
 
+type WebTechStack = {
+  name: string;
+  description: string;
+  version: string;
+};
+type Contributor = {
+  name: string;
+  profileUrl: string;
+  id: string;
+  github: string;
+  jobs: string[];
+};
+
 // Function Types
 type ArrayFixedLength<
   T,

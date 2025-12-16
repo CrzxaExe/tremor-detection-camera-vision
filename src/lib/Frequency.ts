@@ -8,19 +8,19 @@ class Frequency {
   /**
    * Max length of data
    */
-  static maxDataLength: number = 14;
+  static maxDataLength: number = 40;
 
   /**
    * Frequency Data store
    */
-  static data = reactive<ArrayFixedLength<SnapshotFrequency, 0, 14>>([]);
+  static data = reactive<ArrayFixedLength<SnapshotFrequency, 0, 40>>([]);
 
   /**
    * Add new history data of Frequency
    * @param data frequncy data
    */
   static addHistory(data: number) {
-    if (data !== this.data[this.data.length - 1]) this.data.push(data);
+    this.data.push(data);
 
     if (this.maxDataLength > 0 && this.data.length > this.maxDataLength)
       this.data.shift();

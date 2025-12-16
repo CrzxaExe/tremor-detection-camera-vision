@@ -41,7 +41,7 @@ function drawResults(results) {
   const canvas = canvasEl.value
   const ctx = canvas?.getContext('2d')
   if (!canvas || !ctx) return
-  canvas.width = videoEl.value.videoWidth || 720
+  canvas.width = videoEl.value.videoWidth || 600
   canvas.height = videoEl.value.videoHeight || 400
 
   ctx.save()
@@ -103,7 +103,7 @@ async function startHands() {
   })
 
   // Capture user camera
-  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 720, height: 400 }, audio: false })
+  stream = await navigator.mediaDevices.getUserMedia({ video: { width: 600, height: 400 }, audio: false })
   videoEl.value.srcObject = stream
   await videoEl.value.play()
 

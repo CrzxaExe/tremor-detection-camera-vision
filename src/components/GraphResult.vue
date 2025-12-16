@@ -20,10 +20,10 @@
                         <span class="text-light tracking-tight">Stability</span>
                     </div>
                     <div class="flex flex-col lg:gap-2">
-                        <span>{{ amp.toFixed(2) }}</span>
-                        <span>{{ freq.toFixed(2) }}Hz</span>
-                        <span>{{ (stability.stddev * 100).toFixed(0) }}%</span>
-                        <span>{{ (stability.stability * 100).toFixed(0) }}%</span>
+                        <span>{{ (amp ?? 0).toFixed(2) }}</span>
+                        <span>{{ (freq ?? 0).toFixed(2) }}Hz</span>
+                        <span>{{ ((stability.stddev ?? 0) * 100).toFixed(0) }}%</span>
+                        <span>{{ ((stability.stability ?? 0) * 100).toFixed(0) }}%</span>
                     </div>
                 </div>
             </div>
@@ -47,24 +47,29 @@ const amp = computed(() => props.amplitude);
 const freq = computed(() => props.frequency);
 const stability = computed(() => props.stability);
 
+const ampData = computed(() => Amplitude.data.slice(-20));
+const freqData = computed(() => Frequency.data.slice(-20));
+const stabData = computed(() => Stability.data.slice(-20));
+const stddevData = computed(() => Stability.stddevs.slice(-20));
+
 const AmpFreqSeries = reactive([
     {
         name: "Amplitude",
-        data: Amplitude.data
+        data: ampData
     },
     {
-        name: "Frequncy",
-        data: Frequency.data
+        name: "Frequency",
+        data: freqData
     }
 ])
 const StabilitySeries = reactive([
     {
         name: "Stability",
-        data: Stability.data,
+        data: stabData,
     },
     {
         name: "Stddev",
-        data: Stability.stddevs,
+        data: stddevData,
     },
 ])
 
@@ -91,6 +96,9 @@ const AmpFreqOptions = reactive({
                 show: true
             }
         },
+    },
+    tooltip: {
+        enabled: false,
     },
     title: {
         align: 'left'

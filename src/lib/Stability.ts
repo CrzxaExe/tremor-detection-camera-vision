@@ -8,27 +8,25 @@ class Stability {
   /**
    * Max data can be holded
    */
-  static maxDataLength: number = 14;
+  static maxDataLength: number = 40;
 
   /**
    * Stability Data Store
    */
-  static data = reactive<ArrayFixedLength<SnapshotStability, 0, 14>>([]);
+  static data = reactive<ArrayFixedLength<SnapshotStability, 0, 40>>([]);
 
   /**
    * Stddev Data Store
    */
-  static stddevs = reactive<ArrayFixedLength<SnapshotStability, 0, 14>>([]);
+  static stddevs = reactive<ArrayFixedLength<SnapshotStability, 0, 40>>([]);
 
   /**
    * Adding history data
    * @param param0 Sability data
    */
   static addHistory({ stability, stddev }: StabilityResult): void {
-    if (this.data[this.data.length - 1] !== stability)
-      this.data.push(stability);
-    if (this.stddevs[this.stddevs.length - 1] !== stddev)
-      this.stddevs.push(stddev);
+    this.data.push(stability);
+    this.stddevs.push(stddev);
 
     if (this.data.length > this.maxDataLength) this.data.shift();
     if (this.stddevs.length > this.maxDataLength) this.stddevs.shift();

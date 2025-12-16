@@ -45,7 +45,7 @@ const options = computed(() => ({
       pie: {
         customScale: 0.8,
         donut: {
-          size: '0',
+          size: '0%',
           labels: {
             show: false,
           }

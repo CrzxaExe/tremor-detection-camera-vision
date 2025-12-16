@@ -14,7 +14,7 @@ class Landmarks {
    * @param data Snapshoot from mediapipe
    * @param maxLen max of the data can be stored
    */
-  static store(data: SnapshotLandmark, maxLen: number = 50): void {
+  static store(data: SnapshotLandmark, maxLen: number = 100): void {
     this.data.push(data);
     if (maxLen > 0 && this.data.length > maxLen) this.data.shift();
   }
