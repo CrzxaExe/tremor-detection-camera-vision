@@ -9,7 +9,7 @@ Kamera → MediaPipe Hands (21 landmark tangan) → Penyimpanan lintasan landmar
 
 ## Landmark Tangan
 MediaPipe Hands digunakan untuk mendeteksi 21 titik landmark tangan pada setiap frame.  
-Posisi landmark (x, y) disimpan sebagai history untuk membentuk lintasan gerakan tangan yang dianalisis secara temporal.
+Posisi landmark (x, y, z) disimpan sebagai history untuk membentuk lintasan gerakan tangan yang dianalisis secara temporal.
 
 ## Ekstraksi Fitur Tremor
 - **Amplitudo** — Menggambarkan kuat atau lemahnya getaran tangan.  
@@ -21,8 +21,8 @@ Ketiga fitur ini dihitung dari lintasan landmark yang sama dan saling melengkapi
 ## Parameter Sistem
 | Parameter | Deskripsi |
 |------------|------------|
-| **Window** | Jumlah frame yang digunakan untuk analisis |
-| **Sample Rate** | Kecepatan frame kamera (FPS) |
+| **Window** | Kecepatan frame kamera (FPS) |
+| **Sample Rate** | Jumlah frame yang digunakan untuk analisis |
 | **Tolerance** | Ambang batas deviasi untuk stabilitas |
 | **Max History** | Batas maksimum frame yang disimpan |
 
