@@ -2,6 +2,13 @@
 
 Sistem ini mendeteksi dan mengklasifikasikan tremor tangan secara real-time menggunakan kamera dan visi komputer tanpa sensor fisik.
 
+# cara menjalankan kode
+
+npm install - Instalasi package yang dibutuhkan
+npm run dev - menjalankan website secara lokal
+atau
+https://tremor-detection-camera-vision.vercel.app/
+
 ## Alur Sistem
 Kamera → MediaPipe Hands (21 landmark tangan) → Penyimpanan lintasan landmark  
 → Ekstraksi fitur (Amplitudo, Frekuensi, Stabilitas)  
