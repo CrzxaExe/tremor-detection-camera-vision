@@ -2,14 +2,63 @@
 
 Sistem ini mendeteksi dan mengklasifikasikan tremor tangan secara real-time menggunakan kamera dan visi komputer tanpa sensor fisik.
 
-# cara menjalankan kode
+## Cara Menjalankan Aplikasi
 
-npm install - Instalasi package yang dibutuhkan
+### Syarat/Requirement
 
-npm run dev - menjalankan website secara lokal
+- NodeJS V^20.17.0 / Bun V^1.2.21
+- NPM V^10.8.6 (Jika menggunakan NodeJS
 
-atau
+### Download repo
+
+Unduh repo ini:
+
+```bash
+git clone https://github.com/CrzxaExe/tremor-detection-camera-vision.git
+```
+
+Atau unduh kode menjadi folder zip secara manual dan ekstrak folder tersebut pada direktori anda.<br/>
+
+### Instalasi
+
+Menggunakan NPM(NodeJS):
+
+```bash
+npm install
+```
+
+Menggunakan Bun:
+
+```bash
+bun install
+```
+
+
+### Menjalankan
+
+Untuk menjalankan aplikasi gunakan perintah, npm:
+
+```bash
+npm run dev
+```
+
+Atau menggunakan bun
+
+```bash
+bun dev
+```
+
+Aplikasi akan berjalan pada localhost:5173, buka web browser dan isi dengan url:
+
+```
+http://localhost:5173
+```
+
+Kami sudah hosting demo aplikasi ini pada vercel, untuk membuka bisa klik tombol berikut: [Tremor Detection](https://tremor-detection-camera-vision.vercel.app/), atau bisa copas url berikut:
+
+```
 https://tremor-detection-camera-vision.vercel.app/
+```
 
 ## Alur Sistem
 Kamera → MediaPipe Hands (21 landmark tangan) → Penyimpanan lintasan landmark  
