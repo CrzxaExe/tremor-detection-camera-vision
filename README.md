@@ -5,7 +5,9 @@ Sistem ini mendeteksi dan mengklasifikasikan tremor tangan secara real-time meng
 # cara menjalankan kode
 
 npm install - Instalasi package yang dibutuhkan
+
 npm run dev - menjalankan website secara lokal
+
 atau
 https://tremor-detection-camera-vision.vercel.app/
 
