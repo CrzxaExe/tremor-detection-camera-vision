@@ -7,20 +7,20 @@ function triangle(x: number, a: number, b: number, c: number) {
 }
 
 // -------------------
-// Amplitude
+// Amplitude (Meter)
 // -------------------
 function ampLow(x: number) {
-  return triangle(x, -0.01, 0, 0.03);
+    return triangle(x, -0.01, 0, 0.012);
 }
 function ampMed(x: number) {
-  return triangle(x, 0.02, 0.04, 0.06);
+    return triangle(x, 0.008, 0.03, 0.05);
 }
 function ampHigh(x: number) {
-  return triangle(x, 0.04, 0.08, 10.0);
+    return triangle(x, 0.035, 0.06, 10.0);
 }
 
 // -------------------
-// Frequency
+// Frequency (Hz)
 // -------------------
 function freqLow(x: number) {
   return triangle(x, -1, 0.5, 1.5);
@@ -33,7 +33,7 @@ function freqHigh(x: number) {
 }
 
 // -------------------
-// Stability
+// Stability (0 - 1)
 // -------------------
 function stabStable(x: number) {
   return triangle(x, 0.85, 0.95, 1.1);
@@ -48,10 +48,9 @@ function stabUnstable(x: number) {
 // -------------------
 // OUTPUT MEMBERSHIP FUNCTIONS
 // -------------------
-
 function classifyTremor(value: number): string {
-  if (value < 0.35) return "Normal";
-  if (value < 0.75) return "Mild";
+  if (value < 0.28) return "Normal";
+  if (value < 0.60) return "Mild";
   return "Severe";
 }
 
@@ -59,19 +58,19 @@ function classifyTremor(value: number): string {
 function outNormal(x: number): number {
   if (x <= 0) return 1;
   if (x >= 0.4) return 0;
-  return (0.4 - x) / 0.4; // turun dari 1 → 0
+  return (0.4 - x) / 0.4;
 }
 
 function outMild(x: number): number {
   if (x < 0.1 || x > 0.9) return 0;
-  if (x <= 0.5) return (x - 0.1) / 0.4; // naik 0 → 1
-  return (0.9 - x) / 0.4; // turun 1 → 0
+  if (x <= 0.5) return (x - 0.1) / 0.4;
+  return (0.9 - x) / 0.4;
 }
 
 function outSevere(x: number): number {
   if (x <= 0.5) return 0;
   if (x >= 1) return 1;
-  return (x - 0.5) / 0.5; // naik 0 → 1
+  return (x - 0.5) / 0.5;
 }
 
 function computeOutputConfidence(value: number) {
@@ -115,47 +114,48 @@ export function inferTremor(
     unstable: stabUnstable(stability),
   };
 
-  // RULES
+  // RULES REVISI V2
   const rules = [
-    // --- AMP LOW ---
-    { a: A.low, f: F.low, s: S.stable, out: 0 }, // Normal
-    { a: A.low, f: F.low, s: S.mid, out: 0 }, // Normal
-    { a: A.low, f: F.low, s: S.unstable, out: 0.5 }, // Mild (Jitter)
+    // --- AMP LOW (Noise Suppression) ---
+    { a: A.low, f: F.low, s: S.stable, out: 0 }, 
+    { a: A.low, f: F.low, s: S.mid, out: 0.1 },
+    { a: A.low, f: F.low, s: S.unstable, out: 0.4 }, 
 
-    { a: A.low, f: F.med, s: S.stable, out: 0 }, // Normal
-    { a: A.low, f: F.med, s: S.mid, out: 0.5 }, // Mild
-    { a: A.low, f: F.med, s: S.unstable, out: 0.5 }, // Mild
+    { a: A.low, f: F.med, s: S.stable, out: 0 }, 
+    { a: A.low, f: F.med, s: S.mid, out: 0.2 },
+    { a: A.low, f: F.med, s: S.unstable, out: 0.4 }, 
 
-    { a: A.low, f: F.high, s: S.stable, out: 0.5 }, // Mild (High freq tremor)
-    { a: A.low, f: F.high, s: S.mid, out: 0.5 }, // Mild
-    { a: A.low, f: F.high, s: S.unstable, out: 0.5 }, // Mild
+    { a: A.low, f: F.high, s: S.stable, out: 0.2 },  
+    { a: A.low, f: F.high, s: S.mid, out: 0.3 },     
+    { a: A.low, f: F.high, s: S.unstable, out: 0.4 },
 
-    // --- AMP MED ---
-    { a: A.med, f: F.low, s: S.stable, out: 0.5 }, // Mild
-    { a: A.med, f: F.low, s: S.mid, out: 0.5 }, // Mild
-    { a: A.med, f: F.low, s: S.unstable, out: 1 }, // Severe (Tidak stabil!)
+    // --- AMP MED (Area Mild) ---
+    { a: A.med, f: F.low, s: S.stable, out: 0.4 }, 
+    { a: A.med, f: F.low, s: S.mid, out: 0.5 }, 
+    { a: A.med, f: F.low, s: S.unstable, out: 0.9 },
 
-    { a: A.med, f: F.med, s: S.stable, out: 0.5 }, // Mild
-    { a: A.med, f: F.med, s: S.mid, out: 1 }, // Severe
-    { a: A.med, f: F.med, s: S.unstable, out: 1 }, // Severe
+    { a: A.med, f: F.med, s: S.stable, out: 0.5 }, 
+    { a: A.med, f: F.med, s: S.mid, out: 0.7 }, 
+    { a: A.med, f: F.med, s: S.unstable, out: 0.9 }, 
 
-    { a: A.med, f: F.high, s: S.stable, out: 1 }, // Severe
-    { a: A.med, f: F.high, s: S.mid, out: 1 }, // Severe
-    { a: A.med, f: F.high, s: S.unstable, out: 1 }, // Severe
+    { a: A.med, f: F.high, s: S.stable, out: 0.6 }, 
+    { a: A.med, f: F.high, s: S.mid, out: 0.8 }, 
+    { a: A.med, f: F.high, s: S.unstable, out: 1.0 }, 
 
-    // --- AMP HIGH ---
-    { a: A.high, f: F.low, s: S.stable, out: 0.5 }, // Mild (Gerakan lambat besar = Sengaja?)
-    { a: A.high, f: F.low, s: S.mid, out: 1 }, // Severe
-    { a: A.high, f: F.low, s: S.unstable, out: 1 }, // Severe
+    // --- AMP HIGH (Area Severe) ---
+    { a: A.high, f: F.low, s: S.stable, out: 0.7 }, 
+    { a: A.high, f: F.low, s: S.mid, out: 1.0 }, 
+    { a: A.high, f: F.low, s: S.unstable, out: 1.0 }, 
 
-    { a: A.high, f: F.med, s: S.stable, out: 1 }, // Severe
-    { a: A.high, f: F.med, s: S.mid, out: 1 }, // Severe
-    { a: A.high, f: F.med, s: S.unstable, out: 1 }, // Severe
+    { a: A.high, f: F.med, s: S.stable, out: 0.8 }, 
+    { a: A.high, f: F.med, s: S.mid, out: 1.0 }, 
+    { a: A.high, f: F.med, s: S.unstable, out: 1.0 }, 
 
-    { a: A.high, f: F.high, s: S.stable, out: 1 }, // Severe
-    { a: A.high, f: F.high, s: S.mid, out: 1 }, // Severe
-    { a: A.high, f: F.high, s: S.unstable, out: 1 }, // Severe
+    { a: A.high, f: F.high, s: S.stable, out: 1.0 }, 
+    { a: A.high, f: F.high, s: S.mid, out: 1.0 }, 
+    { a: A.high, f: F.high, s: S.unstable, out: 1.0 }, 
   ];
+  
   // INFERENCE
   let weighted = 0;
   let totalWeight = 0;

@@ -1,0 +1,6 @@
+filename,label,calc_amp,calc_freq,calc_stab,auto_suggestion
+019.json,Normal,0.01132,3.86,0.971,Normal
+020.json,Normal,0.0117,5.04,0.965,Normal
+008.json,Mild,0.03708,3.27,0.89,Mild
+005.json,Mild,0.03739,4.86,0.919,Mild
+006.json,Severe,0.06133,2.14,0.841,Severe
